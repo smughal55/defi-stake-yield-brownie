@@ -1,0 +1,3 @@
+[submodule "front_end"]
+	path = front_end
+	url = https://github.com/smughal55/defi-stake-yield-frontend.git
