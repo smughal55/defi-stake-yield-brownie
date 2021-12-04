@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract TokenFarm is Ownable {
+contract TokenFarm is Ownable, ReentrancyGuard {
     // mapping token address -> staker address -> amount , keep track of how much of each token each staker has staked
     // mapping per token per address per amount
     // token address get's mapped to the user/staker addresses which gets mapped to the amount
@@ -131,8 +132,10 @@ contract TokenFarm is Ownable {
         }
     }
 
-    // Can this be reentrancy attacked?
-    function unStakeTokens(address _token) public {
+    // Can this be reentrancy attacked? As of now, not really since transfer()
+    // gas stipend is ~ 2330 (not enough!), neverthelesss, let's prevent it
+    // reentrancyGuard over check-effects-interaction, for now
+    function unStakeTokens(address _token) public nonReentrant {
         uint256 balance = stakingBalance[_token][msg.sender];
         require(balance > 0, "Staking balance cannot be 0");
         IERC20(_token).transfer(msg.sender, balance);
