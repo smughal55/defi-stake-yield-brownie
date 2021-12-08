@@ -60,7 +60,7 @@ contract TokenFarm is Ownable, ReentrancyGuard {
     // this gets the user's total value accross all different tokens staked
     function getUserTotalValue(address _user) public view returns (uint256) {
         uint256 totalValue = 0;
-        require(uniqueTokensStaked[_user] > 0, "No tokens staked!");
+        require(uniqueTokensStaked[_user] > 0, "No tokens staked!"); // misfire reverts from react, may refactor to return 0 instead of revert
         for (
             uint256 allowedTokensIdx = 0;
             allowedTokensIdx < allowedTokens.length;
