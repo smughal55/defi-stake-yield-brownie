@@ -132,15 +132,12 @@ contract TokenFarm is Ownable, ReentrancyGuard {
         }
     }
 
-    // Can this be reentrancy attacked? As of now, not really since transfer()
-    // gas stipend is ~ 2330 (not enough!), neverthelesss, let's prevent it
-    // reentrancyGuard over check-effects-interaction, for now
     function unStakeTokens(address _token) public nonReentrant {
         uint256 balance = stakingBalance[_token][msg.sender];
         require(balance > 0, "Staking balance cannot be 0");
-        IERC20(_token).transfer(msg.sender, balance);
         stakingBalance[_token][msg.sender] = 0;
         uniqueTokensStaked[msg.sender] = uniqueTokensStaked[msg.sender] - 1;
+        IERC20(_token).transfer(msg.sender, balance);
     }
 
     // only this contract can call this function, hence, internal
